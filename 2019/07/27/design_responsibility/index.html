@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="小米" />
+
+
+
+<meta name="description" content="责任链模式（Chain of Responsibility），行为型设计模式之一。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java设计模式-责任链模式">
+<meta property="og:url" content="http://xiaomiller.cn/2019/07/27/design_responsibility/index.html">
+<meta property="og:site_name" content="小米的博客">
+<meta property="og:description" content="责任链模式（Chain of Responsibility），行为型设计模式之一。">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/AmazingXiaomi/image/master/595349-eea9ef31f92adee2.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/AmazingXiaomi/image/master/Responsibilit-diagrams.jpg">
+<meta property="article:published_time" content="2019-07-27T08:03:32.000Z">
+<meta property="article:modified_time" content="2019-09-06T06:30:21.727Z">
+<meta property="article:author" content="小米">
+<meta property="article:tag" content="java设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/AmazingXiaomi/image/master/595349-eea9ef31f92adee2.webp">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="小米的博客" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/bitbug_favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>java设计模式-责任链模式 | 小米的博客</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/30220803.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/"></a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/archives/">主页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:a1205938863@gmail.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" rel="noopener" href="https://weibo.com/u/5362680174?refer_flag=1001030101_&is_all=1" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" rel="noopener" href="https://github.com/AmazingXiaomi" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">java设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/" rel="tag">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/springboot/" rel="tag">springboot</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">一个小屌丝</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/30220803.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/archives/">主页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:a1205938863@gmail.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="https://weibo.com/u/5362680174?refer_flag=1001030101_&is_all=1" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/AmazingXiaomi" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-design_responsibility" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/07/27/design_responsibility/" class="article-date">
+      <time datetime="2019-07-27T08:03:32.000Z" itemprop="datePublished">2019-07-27</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      java设计模式-责任链模式
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">java设计模式</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h1><h2 id="1-简述"><a href="#1-简述" class="headerlink" title="1.简述"></a>1.简述</h2><p>  <strong>责任链模式</strong>（Chain of Responsibility），行为型设计模式之一。什么是责任链呢？这个链的形式更像是数据结构中的单链表，链中的每个节点都有自己的职责，同时也持有下一个节点的引用，<br>  属于自己职责范围内的请求就自行处理，并完成请求的处理；而不属于的职责就传递给下一个节点。每个节点都是如此循环，直至请求被处理或者已经没有处理节点。</p>
+<p>   这种设计模式是为了避免请求的发送者和接收者之间的耦合关系，而责任链就是中间的请求处理者，其中可能包括多个有可能处理请求的对象，并将这些对象炼成一条链。这样也使得请求发送者无需关心请求的处理细节和请求的传递。</p>
+<p>   <img src="https://raw.githubusercontent.com/AmazingXiaomi/image/master/595349-eea9ef31f92adee2.webp" alt="img"></p>
+<ul>
+<li>Client：客户端，请求的发起者</li>
+<li>Handler：抽象处理者，声明一个请求方法，并在其中保持一个对下一个处理节点Handler对象的引用</li>
+<li>ConcreteHandler：具体处理角色，对请求进行处理；如果不能处理则将请求转发给下一个节点对象处理</li>
+</ul>
+<h2 id="2-案例实现"><a href="#2-案例实现" class="headerlink" title="2.案例实现"></a>2.案例实现</h2><h3 id="场景介绍"><a href="#场景介绍" class="headerlink" title="场景介绍"></a>场景介绍</h3><p>  以公司正常请假为例，1天以内的假需要客户端部门主管签字，3天以内（不包含3天）需要技术部门主管签字，3天及以上就需要找CEO签字。</p>
+<p>  首先是假条的类，包含姓名、请假原因和请假时间，使用final声明属性只是为了避免外部修改属性而已。<br>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @ClassName: LeaveNote</span><br><span class="line"> * @User: xiaomi</span><br><span class="line"> * @Description: //请假条</span><br><span class="line"> * @Time: 2019/6/26 0026 下午 1:58</span><br><span class="line"> * @email: a1205938863@gmail.com</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">public class LeaveNote &#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private String reason;</span><br><span class="line">    private int leaveDays;</span><br><span class="line"></span><br><span class="line">    public LeaveNote(String name, String reason, int leaveDays) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.reason = reason;</span><br><span class="line">        this.leaveDays = leaveDays;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getReason() &#123;</span><br><span class="line">        return reason;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setReason(String reason) &#123;</span><br><span class="line">        this.reason = reason;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getLeaveDays() &#123;</span><br><span class="line">        return leaveDays;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setLeaveDays(int leaveDays) &#123;</span><br><span class="line">        this.leaveDays = leaveDays;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>  接下来就是比较重要的Handler类，代码比较简单，下一个Handler的对象引用，再就是handle()和setNextHandler()方法，不多解释了，和之前的UML图中的的结构是一样的.<br>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @ClassName: Handler</span><br><span class="line"> * @User: xiaomi</span><br><span class="line"> * @Description: //TODO</span><br><span class="line"> * @Time: 2019/6/26 0026 下午 1:59</span><br><span class="line"> * @email: a1205938863@gmail.com</span><br><span class="line"> */</span><br><span class="line">public  interface Handler &#123;</span><br><span class="line">     Optional&lt;String&gt; hand(LeaveNote note);</span><br><span class="line">     void setNextHandler(Handler nextHandler);</span><br><span class="line">     Boolean checkLeave(int leave);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>  然后就是他的实现类，这也是个抽象类，这个类里有个hand()方法，为了统一管理责任链的链式流程。<br>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @ClassName: AbsractHandler</span><br><span class="line"> * @User: xiaomi</span><br><span class="line"> * @Description: //TODO</span><br><span class="line"> * @Time: 2019/6/26 0026 下午 2:02</span><br><span class="line"> * @email: a1205938863@gmail.com</span><br><span class="line"> */</span><br><span class="line">public abstract class AbsractHandler implements Handler &#123;</span><br><span class="line">    private Handler handler;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Optional&lt;String&gt; hand(LeaveNote note) &#123;</span><br><span class="line">        if (checkLeave( note.getLeaveDays() ))&#123;</span><br><span class="line">           return doHand( note );</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            setNextHandler( handler );</span><br><span class="line">            return handler.hand( note );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void setNextHandler(Handler nextHandler) &#123;</span><br><span class="line">        this.handler=nextHandler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected abstract Optional&lt;String&gt; doHand(LeaveNote note);</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>  和抽象类的具体实现类，这些就是责任链上的每一个点<br>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @ClassName: Ceo</span><br><span class="line"> * @User: xiaomi</span><br><span class="line"> * @Description: //TODO</span><br><span class="line"> * @Time: 2019/6/26 0026 下午 2:12</span><br><span class="line"> * @email: a1205938863@gmail.com</span><br><span class="line"> */</span><br><span class="line">public class Ceo extends AbsractHandler &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected Optional&lt;String&gt; doHand(LeaveNote note) &#123;</span><br><span class="line">        String s=&quot;CEO同意！&quot;;</span><br><span class="line">        return Optional.ofNullable( s );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Boolean checkLeave(int leave) &#123;</span><br><span class="line">        return leave&gt;3;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void setNextHandler(Handler nextHandler) &#123;</span><br><span class="line">        super.setNextHandler( nextHandler );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class ClientLeader extends AbsractHandler &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected Optional&lt;String&gt; doHand(LeaveNote note) &#123;</span><br><span class="line">        String s=&quot;上级同意！&quot;;</span><br><span class="line">        return Optional.ofNullable( s );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Boolean checkLeave(int leave) &#123;</span><br><span class="line">        return leave&lt;=1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void setNextHandler(Handler nextHandler) &#123;</span><br><span class="line">        super.setNextHandler( nextHandler );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class TechnologyLeader extends AbsractHandler &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected Optional&lt;String&gt; doHand(LeaveNote note) &#123;</span><br><span class="line">        String s=&quot;技术领导同意！&quot;;</span><br><span class="line">        return Optional.ofNullable( s );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Boolean checkLeave(int leave) &#123;</span><br><span class="line">        return leave &lt;= 3;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void setNextHandler(Handler nextHandler) &#123;</span><br><span class="line">        super.setNextHandler( nextHandler );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>  测试一下<br>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line">/**</span><br><span class="line"> * @ClassName: ClientLeave</span><br><span class="line"> * @User: xiaomi</span><br><span class="line"> * @Description: //责任链模式</span><br><span class="line"> * @Time: 2019/6/26 0026 下午 2:32</span><br><span class="line"> * @email: a1205938863@gmail.com</span><br><span class="line"> */</span><br><span class="line">public class ClientLeave &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        LeaveNote leaveNote7=new LeaveNote(&quot;xiaomi&quot;,&quot;三年没回去，媳妇怀孕了&quot;,7);</span><br><span class="line">        LeaveNote leaveNote3=new LeaveNote(&quot;xiaomi&quot;,&quot;三年没回去，媳妇怀孕了&quot;,3);</span><br><span class="line">        LeaveNote leaveNote1=new LeaveNote(&quot;xiaomi&quot;,&quot;三年没回去，媳妇怀孕了&quot;,1);</span><br><span class="line"></span><br><span class="line">        Handler clientLeader=new ClientLeader();</span><br><span class="line">        Handler technologyLeader=new TechnologyLeader();</span><br><span class="line">        Handler ceo=new Ceo();</span><br><span class="line">        clientLeader.setNextHandler(technologyLeader  );</span><br><span class="line">        technologyLeader.setNextHandler(ceo  );</span><br><span class="line">        System.out.println(clientLeader.hand(leaveNote7  ).get());</span><br><span class="line">        System.out.println(clientLeader.hand(leaveNote3  ).get());</span><br><span class="line">        System.out.println(clientLeader.hand(leaveNote1  ).get());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://raw.githubusercontent.com/AmazingXiaomi/image/master/Responsibilit-diagrams.jpg" alt="img"></p>
+<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3.总结"></a>3.总结</h2><p>责任链的优点就在于请求者和接受者松散耦合，以及能动态组合职责。<br>例子中可以看出，请求者不知道接受者是谁，也不知道具体的处理过程，只需要发出请求就行了。而对于每个职责对象来说，也不关心请求者和其他的职责对象（虽然持有下一个职责对象的引用），只负责处理自己职责的部分，其他的就交给其他的职责对象去处理。<br>动态组合职责则是利用对于职责的拆分，可以灵活的组合形成责任链，从而可以灵活的分配职责，也可以灵活的实现职责对象。<br>其实会发现，为了处理一个请求，我们可能会创建很多个职责对象，但是最后实际执行的最多只有一个职责对象（甚至没有），为了兼容更多职责就需要更多地职责对象。可见细化职责的同时，我们也在不断的增加对象，这不是一个好现象；而且在职责对象中，可能需要提供默认处理，不然请求很可能不会被责任链中的任何一个职责对象处理。<br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">分离职责，动态组合</span><br></pre></td></tr></table></figure></p>
+<p>转载<br>作者：MrTrying<br>链接：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b1ddd8a868e0">https://www.jianshu.com/p/b1ddd8a868e0</a><br>来源：简书<br>简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。    </p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/07/27/design_responsibility/">java设计模式-责任链模式</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2019-07-27, 16:03:32</p>
+        <p><span>最后更新:</span>2019-09-06, 14:30:21</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/07/27/design_responsibility/" title="java设计模式-责任链模式">http://xiaomiller.cn/2019/07/27/design_responsibility/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://xiaomiller.cn/2019/07/27/design_responsibility/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/09/06/design_decorator/">
+                    java设计模式-装饰器模式
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/10/09/linux-nfs/">
+                    Linux下NFS服务器的搭建
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">责任链模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%AE%80%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">1.简述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A1%88%E4%BE%8B%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">2.案例实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.2.1.</span> <span class="toc-text">场景介绍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">3.总结</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"java设计模式-责任链模式　| 小米的博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://xiaomiller.cn/2019/07/27/design_responsibility/';
+            this.page.identifier = '2019/07/27/design_responsibility/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//xiao-mi-bo-ke.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2019/09/06/design_decorator/" title="上一篇: java设计模式-装饰器模式">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/10/09/linux-nfs/" title="下一篇: Linux下NFS服务器的搭建">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09/18/design_adapter/">java设计模式-适配器模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/06/design_decorator/">java设计模式-装饰器模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/27/design_responsibility/">java设计模式-责任链模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/linux-nfs/">Linux下NFS服务器的搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/08/hello-world/">Hello World</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/14/linux/">linux用户、组学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/java-proxy/">java动态代理学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/springboot-dubbo/">springboot与dubbo整合</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/06/select2/">select2</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/06/springboot-Restful/">Restful学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/30/springboot-mybatis/">springboot与mybatis整合</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/14/MyView/">疾风剑豪教学</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/14/springboot/">springboot入门</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div style="width:300px;margin:0 auto; padding:20px 0;">
+        <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=34072202000247"
+           style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="/img/beian.png" style="float:left;"/>
+            <p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">皖公网安备 34072202000247号</p></a>
+        <a target="_blank" href="https://beian.miit.gov.cn/"
+           style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><p
+                    style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">备案号
+                皖ICP备2021016365号-1</p></a>
+    </div>
+</footer>
+
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+<script src="//cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  </div>
+</body>
+</html>

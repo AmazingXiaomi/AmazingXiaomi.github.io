@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="小米" />
+
+
+
+<meta name="description" content="这里配置的是单机模式下的zookeeper，如果搭建的是分布式的服务器的话还可以搭建集群模式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="springboot与dubbo整合">
+<meta property="og:url" content="http://xiaomiller.cn/2017/11/08/springboot-dubbo/index.html">
+<meta property="og:site_name" content="小米的博客">
+<meta property="og:description" content="这里配置的是单机模式下的zookeeper，如果搭建的是分布式的服务器的话还可以搭建集群模式。">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/AmazingXiaomi/image/master/dubboClient.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/AmazingXiaomi/image/master/dubboServer.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/AmazingXiaomi/image/master/dubboResult.png">
+<meta property="article:published_time" content="2017-11-08T14:43:32.000Z">
+<meta property="article:modified_time" content="2018-10-08T06:24:25.237Z">
+<meta property="article:author" content="小米">
+<meta property="article:tag" content="springboot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/AmazingXiaomi/image/master/dubboClient.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="小米的博客" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/bitbug_favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>springboot与dubbo整合 | 小米的博客</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/30220803.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/"></a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/archives/">主页</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:a1205938863@gmail.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" rel="noopener" href="https://weibo.com/u/5362680174?refer_flag=1001030101_&is_all=1" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" rel="noopener" href="https://github.com/AmazingXiaomi" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">java设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/" rel="tag">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/springboot/" rel="tag">springboot</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">一个小屌丝</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/30220803.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/archives/">主页</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:a1205938863@gmail.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="https://weibo.com/u/5362680174?refer_flag=1001030101_&is_all=1" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/AmazingXiaomi" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-springboot-dubbo" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/11/08/springboot-dubbo/" class="article-date">
+      <time datetime="2017-11-08T14:43:32.000Z" itemprop="datePublished">2017-11-08</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      springboot与dubbo整合
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springboot/" rel="tag">springboot</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <hr>
+<h2 id="dubbo服务搭建"><a href="#dubbo服务搭建" class="headerlink" title="dubbo服务搭建"></a>dubbo服务搭建</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">搭建zookeeper 步骤</span><br></pre></td></tr></table></figure>
+<p>这里配置的是单机模式下的zookeeper，如果搭建的是分布式的服务器的话还可以搭建集群模式。</p>
+<ol>
+<li><p>从官网下载压缩包。下载地址<a target="_blank" rel="noopener" href="http://zookeeper.apache.org/releases.html">zookeeper下载</a></p>
+</li>
+<li><p>解压缩下载好的文件，进入conf文件夹内，创建zoo.cfg文件。并写入以下内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># The number of milliseconds of each tick  </span><br><span class="line">tickTime=2000</span><br><span class="line"># The number of ticks that the initial   </span><br><span class="line"># synchronization phase can take  </span><br><span class="line">initLimit=10</span><br><span class="line"># The number of ticks that can pass between   </span><br><span class="line"># sending a request and getting an acknowledgement  </span><br><span class="line">syncLimit=5 </span><br><span class="line"># the directory where the snapshot is stored.  </span><br><span class="line"># do not use /tmp for storage, /tmp here is just   </span><br><span class="line"># example sakes.  </span><br><span class="line">dataDir=E:\\zookeeper-3.4.10\\zookeeper-3.4.10\\data </span><br><span class="line">dataLogDir=E:\\zookeeper-3.4.10\\zookeeper-3.4.10\\log</span><br><span class="line"># the port at which the clients will connect  </span><br><span class="line">clientPort=2181</span><br></pre></td></tr></table></figure></li>
+<li><p>linux系统进入bin目录下，启动zookeeper，输入以下命令完成启动。</p>
+<code>
+./zkServer.sh start
+</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">安装dubbo服务 步骤</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>下载dubbo的项目下来，可从<a target="_blank" rel="noopener" href="http://dubbo.io/">dubbo官网</a>下载到本地。解压文件。</p>
+</li>
+<li><p>进入dubbo-admin的目录下,打成war包。输入如下命令进入target即可看到war包。</p>
+<pre><code>
+mvn clean package
+<code></pre></li>
+<li><p>拷贝war包到tomcat中，启动tomcat，修改WEB—INF下的dubbo.properties文件，将zookeeper改成自己的zookeeper的地址，修改root的guest的密码。重新启动tomcat即可。</p>
+</li>
+</ol>
+<p>完成以上安装，在浏览器输入localhost:8080即可进入dubbo管理中心。<br>注意：需要将dubbo-admin项目修改为tomcat的root根路径中，有两种方式可以修改。</p>
+<blockquote>
+<ol>
+<li>直接将项目拷贝到root目录下。</li>
+<li>修改tomcat的server.xml 具体如下</li>
+</ol>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;Host name=&quot;localhost&quot;  appBase=&quot;webapps&quot;</span><br><span class="line">           unpackWARs=&quot;true&quot; autoDeploy=&quot;true&quot;&gt;</span><br><span class="line">	&lt;Context path=&quot;&quot; docBase=&quot;dubbo-admin-2.5.5&quot; reloadable=&quot;true&quot; /&gt;</span><br><span class="line">       &lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot; directory=&quot;logs&quot;</span><br><span class="line">              prefix=&quot;localhost_access_log&quot; suffix=&quot;.txt&quot;</span><br><span class="line">              pattern=&quot;%h %l %u %t &amp;quot;%r&amp;quot; %s %b&quot; /&gt;</span><br><span class="line"></span><br><span class="line">     &lt;/Host&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="在springboot中添加dubbo服务"><a href="#在springboot中添加dubbo服务" class="headerlink" title="在springboot中添加dubbo服务"></a>在springboot中添加dubbo服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">加入dubbo的依赖</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">           &lt;groupId&gt;io.dubbo.springboot&lt;/groupId&gt;</span><br><span class="line">           &lt;artifactId&gt;spring-boot-starter-dubbo&lt;/artifactId&gt;</span><br><span class="line">           &lt;version&gt;1.0.0&lt;/version&gt;</span><br><span class="line">       &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">加入dubbo的配置文件</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring.dubbo.application.name=provider</span><br><span class="line">spring.dubbo.registry.address=zookeeper://47.89.17.7:2181</span><br><span class="line">spring.dubbo.protocol.name=dubbo</span><br><span class="line">spring.dubbo.protocol.port=20880</span><br><span class="line">spring.dubbo.scan=com.xiaomi.springboot.dubbo</span><br></pre></td></tr></table></figure>
+
+<p>这个时候只要在com.xiaomi.springboot.dubbo包中的接口加上dubbo的service注解即可将dubbo服务暴露出来。</p>
+<h2 id="动手搭建一个完整的dubbo服务"><a href="#动手搭建一个完整的dubbo服务" class="headerlink" title="动手搭建一个完整的dubbo服务"></a>动手搭建一个完整的dubbo服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">分别创建两个springboot的model，一个作为privider端，一个作为cusome端。</span><br></pre></td></tr></table></figure>
+<p>分别加入上面的dubbo依赖和配置文件。具体代码见下面几张图，</p>
+<p><img src="https://raw.githubusercontent.com/AmazingXiaomi/image/master/dubboClient.png" alt="img"><br><img src="https://raw.githubusercontent.com/AmazingXiaomi/image/master/dubboServer.png" alt="img"></p>
+<p>CityDubboService类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package com.xiaomi.springboot.dubbo;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import com.xiaomi.springboot.domain.City;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 城市业务 Dubbo 服务层</span><br><span class="line"> *</span><br><span class="line"> * Created by bysocket on 28/02/2017.</span><br><span class="line"> */</span><br><span class="line">public interface CityDubboService &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 根据城市名称，查询城市信息</span><br><span class="line">     * @param cityName</span><br><span class="line">     */</span><br><span class="line">    City findCityByName(String cityName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>** CityDubboServiceImpl类 **</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package com.xiaomi.springboot.dubbo.impl;</span><br><span class="line"></span><br><span class="line">import com.alibaba.dubbo.config.annotation.Service;</span><br><span class="line">import com.xiaomi.springboot.domain.City;</span><br><span class="line">import com.xiaomi.springboot.dubbo.CityDubboService;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 城市业务 Dubbo 服务层实现层</span><br><span class="line"> *</span><br><span class="line"> * Created by bysocket on 28/02/2017.</span><br><span class="line"> */</span><br><span class="line">// 注册为 Dubbo 服务</span><br><span class="line">@Service(version = &quot;1.0.0&quot;)</span><br><span class="line">public class CityDubboServiceImpl implements CityDubboService &#123;</span><br><span class="line"></span><br><span class="line">    public City findCityByName(String cityName) &#123;</span><br><span class="line">        return new City(1L,2L,&quot;温岭&quot;,&quot;是我的故乡&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>City类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">package com.xiaomi.springboot.domain;</span><br><span class="line"></span><br><span class="line">import java.io.Serializable;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 城市实体类</span><br><span class="line"> *</span><br><span class="line"> * Created by xiaomi on 07/02/2017.</span><br><span class="line"> */</span><br><span class="line">public class City implements Serializable &#123;</span><br><span class="line"></span><br><span class="line">    private static final long serialVersionUID = -1L;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 城市编号</span><br><span class="line">     */</span><br><span class="line">    private Long id;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 省份编号</span><br><span class="line">     */</span><br><span class="line">    private Long provinceId;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 城市名称</span><br><span class="line">     */</span><br><span class="line">    private String cityName;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 描述</span><br><span class="line">     */</span><br><span class="line">    private String description;</span><br><span class="line"></span><br><span class="line">    public City() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public City(Long id, Long provinceId, String cityName, String description) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">        this.provinceId = provinceId;</span><br><span class="line">        this.cityName = cityName;</span><br><span class="line">        this.description = description;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Long getId() &#123;</span><br><span class="line">        return id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setId(Long id) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Long getProvinceId() &#123;</span><br><span class="line">        return provinceId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setProvinceId(Long provinceId) &#123;</span><br><span class="line">        this.provinceId = provinceId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getCityName() &#123;</span><br><span class="line">        return cityName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setCityName(String cityName) &#123;</span><br><span class="line">        this.cityName = cityName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getDescription() &#123;</span><br><span class="line">        return description;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setDescription(String description) &#123;</span><br><span class="line">        this.description = description;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>CityDubboConsumerService类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">package com.xiaomi.springboot.dubbo;</span><br><span class="line"></span><br><span class="line">import com.alibaba.dubbo.config.annotation.Reference;</span><br><span class="line">import com.xiaomi.springboot.domain.City;</span><br><span class="line">import org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 城市 Dubbo 服务消费者</span><br><span class="line"> *</span><br><span class="line"> * Created by bysocket on 28/02/2017.</span><br><span class="line"> */</span><br><span class="line">@Component</span><br><span class="line">public class CityDubboConsumerService &#123;</span><br><span class="line"></span><br><span class="line">    @Reference(version = &quot;1.0.0&quot;)</span><br><span class="line">    CityDubboService cityDubboService;</span><br><span class="line"></span><br><span class="line">    @Reference(version = &quot;1.0.0&quot;)</span><br><span class="line">    AllCityService cityService;</span><br><span class="line"></span><br><span class="line">    public void printCity() &#123;</span><br><span class="line">        String cityName=&quot;温岭&quot;;</span><br><span class="line">        City city = cityDubboService.findCityByName(cityName);</span><br><span class="line">        System.out.println(city.toString());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void printCitys() &#123;</span><br><span class="line">        List&lt;City&gt; allCity = cityService.findAllCity();</span><br><span class="line">        System.out.println(allCity.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>消费者启动时测试代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package com.xiaomi.springboot;</span><br><span class="line"></span><br><span class="line">import com.xiaomi.springboot.dubbo.CityDubboConsumerService;</span><br><span class="line">import org.springframework.boot.SpringApplication;</span><br><span class="line">import org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line">import org.springframework.context.ConfigurableApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Spring Boot 应用启动类</span><br><span class="line"> *</span><br><span class="line"> * Created by bysocket on 16/4/26.</span><br><span class="line"> */</span><br><span class="line">// Spring Boot 应用的标识</span><br><span class="line">@SpringBootApplication</span><br><span class="line">public class ClientApplication &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        // 程序启动入口</span><br><span class="line">        // 启动嵌入式的 Tomcat 并初始化 Spring 环境及其各 Spring 组件</span><br><span class="line">        ConfigurableApplicationContext run = SpringApplication.run(ClientApplication.class, args);</span><br><span class="line">        CityDubboConsumerService cityService = run.getBean(CityDubboConsumerService.class);</span><br><span class="line">        cityService.printCitys();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到如下结果</p>
+<p><img src="https://raw.githubusercontent.com/AmazingXiaomi/image/master/dubboResult.png" alt="img"></p>
+<p>大功告成！！！</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/11/08/springboot-dubbo/">springboot与dubbo整合</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2017-11-08, 22:43:32</p>
+        <p><span>最后更新:</span>2018-10-08, 14:24:25</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/11/08/springboot-dubbo/" title="springboot与dubbo整合">http://xiaomiller.cn/2017/11/08/springboot-dubbo/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://xiaomiller.cn/2017/11/08/springboot-dubbo/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/01/11/java-proxy/">
+                    java动态代理学习
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2017/11/06/select2/">
+                    select2
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#dubbo%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">dubbo服务搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8springboot%E4%B8%AD%E6%B7%BB%E5%8A%A0dubbo%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.</span> <span class="toc-text">在springboot中添加dubbo服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%89%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84dubbo%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.</span> <span class="toc-text">动手搭建一个完整的dubbo服务</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"springboot与dubbo整合　| 小米的博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://xiaomiller.cn/2017/11/08/springboot-dubbo/';
+            this.page.identifier = '2017/11/08/springboot-dubbo/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//xiao-mi-bo-ke.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/01/11/java-proxy/" title="上一篇: java动态代理学习">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2017/11/06/select2/" title="下一篇: select2">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09/18/design_adapter/">java设计模式-适配器模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/09/06/design_decorator/">java设计模式-装饰器模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/27/design_responsibility/">java设计模式-责任链模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/linux-nfs/">Linux下NFS服务器的搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/08/hello-world/">Hello World</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/14/linux/">linux用户、组学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/java-proxy/">java动态代理学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/springboot-dubbo/">springboot与dubbo整合</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/06/select2/">select2</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/06/springboot-Restful/">Restful学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/30/springboot-mybatis/">springboot与mybatis整合</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/14/MyView/">疾风剑豪教学</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/14/springboot/">springboot入门</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div style="width:300px;margin:0 auto; padding:20px 0;">
+        <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=34072202000247"
+           style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="/img/beian.png" style="float:left;"/>
+            <p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">皖公网安备 34072202000247号</p></a>
+        <a target="_blank" href="https://beian.miit.gov.cn/"
+           style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><p
+                    style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">备案号
+                皖ICP备2021016365号-1</p></a>
+    </div>
+</footer>
+
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+<script src="//cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  </div>
+</body>
+</html>
